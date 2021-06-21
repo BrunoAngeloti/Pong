@@ -3,47 +3,158 @@ import styles from '../../styles/components/Jogo.module.css'
 import brain from 'brain.js/src/index'
 import treino from './treino.json'
 
-export function Jogo(){
+export function Jogo(props){
     const canvasRef = useRef(null)
     const [scoreMachine, setScoreMachine] = useState(0); 
     const [scoreHuman,setScoreHuman] = useState(0);
-  
+    var velPaddle;
+    var paddleHeight;
+    var paddleWidth;
+    var comeco;
+    var paddleRightY;
+    var paddleRightX;
+    var upPressedPaddleRight;
+    var downPressedPaddleRight;
+    var paddleLeftY;
+    var paddleLeftX ;
+    var upPressedPaddleLeft ;
+    var downPressedPaddleLeft;
+    var ballRadius;
+    var velBall;
+    var velPadrao;
+    var levelIA;
+    var tempoReacao;
+    var points= 0;
+
     useEffect(() => { 
+         //------- CONFIGURAÇÕES DO CANVAS -------
+         var canvas = canvasRef.current;
+         var width = canvas.width;
+         var height = canvas.height;
+         var ctx = canvas.getContext("2d");
+         var color = "white"
+         var scoreMaquina = 0;
+         var scorePerson = 0;
+    
+
+        if(props.level === 0){
+            //------- CONFIGURAÇÕES DOS PADDLES -------
+            velPaddle = 10;
+            paddleHeight = 100;
+            paddleWidth = 10;
+            comeco = 1;
+
+            //------- CONFIGURAÇÕES DO PADDLE DA DIREITA -------
+            paddleRightY = (height - paddleHeight) / 2;
+            paddleRightX = width - 20 - paddleWidth;
+            upPressedPaddleRight = false;
+            downPressedPaddleRight = false;
+
+            //------- CONFIGURAÇÕES DO PADDLE DA ESQUERDA -------
+            paddleLeftY = (height - paddleHeight) / 2;
+            paddleLeftX = 20;
+            upPressedPaddleLeft = false;
+            downPressedPaddleLeft = false;
+            tempoReacao = 2;
+
+            //------- CONFIGURAÇÕES DA BOLINHA -------
+            ballRadius = 10;
+            velBall = 3;
+            velPadrao = 3;  
+
+            levelIA = 10;
+            points = 5;
+
+        }else if(props.level === 1){
+            //------- CONFIGURAÇÕES DOS PADDLES -------
+            velPaddle = 10;
+            paddleHeight = 75;
+            paddleWidth = 9;
+            comeco = 1;
+
+            //------- CONFIGURAÇÕES DO PADDLE DA DIREITA -------
+            paddleRightY = (height - paddleHeight) / 2;
+            paddleRightX = width - 20 - paddleWidth;
+            upPressedPaddleRight = false;
+            downPressedPaddleRight = false;
+
+            //------- CONFIGURAÇÕES DO PADDLE DA ESQUERDA -------
+            paddleLeftY = (height - paddleHeight) / 2;
+            paddleLeftX = 20;
+            upPressedPaddleLeft = false;
+            downPressedPaddleLeft = false;
+
+            //------- CONFIGURAÇÕES DA BOLINHA -------
+            ballRadius = 10;
+            velBall = 5;
+            velPadrao = 5;
+
+            levelIA = 2;
+            tempoReacao = 2;
+            points = 15;
+
+        }else if(props.level === 2){
+            //------- CONFIGURAÇÕES DOS PADDLES -------
+            velPaddle = 12;
+            paddleHeight = 60;
+            paddleWidth = 7;
+            comeco = 1;
+
+            //------- CONFIGURAÇÕES DO PADDLE DA DIREITA -------
+            paddleRightY = (height - paddleHeight) / 2;
+            paddleRightX = width - 20 - paddleWidth;
+            upPressedPaddleRight = false;
+            downPressedPaddleRight = false;
+
+            //------- CONFIGURAÇÕES DO PADDLE DA ESQUERDA -------
+            paddleLeftY = (height - paddleHeight) / 2;
+            paddleLeftX = 20;
+            upPressedPaddleLeft = false;
+            downPressedPaddleLeft = false;
+
+            //------- CONFIGURAÇÕES DA BOLINHA -------
+            ballRadius = 10;
+            velBall = 7;
+            velPadrao = 7;
+
+            levelIA = 1;
+            tempoReacao = 1.5
+            points = 50;
+
+        }else{
+            //------- CONFIGURAÇÕES DOS PADDLES -------
+            velPaddle = 15;
+            paddleHeight = 40;
+            paddleWidth = 5;
+            comeco = 1;
+
+            //------- CONFIGURAÇÕES DO PADDLE DA DIREITA -------
+            paddleRightY = (height - paddleHeight) / 2;
+            paddleRightX = width - 20 - paddleWidth;
+            upPressedPaddleRight = false;
+            downPressedPaddleRight = false;
+
+            //------- CONFIGURAÇÕES DO PADDLE DA ESQUERDA -------
+            paddleLeftY = (height - paddleHeight) / 2;
+            paddleLeftX = 20;
+            upPressedPaddleLeft = false;
+            downPressedPaddleLeft = false;
+
+            //------- CONFIGURAÇÕES DA BOLINHA -------
+            ballRadius = 10;
+            velBall = 15;
+            velPadrao = 15;
+
+            levelIA = 100;
+            tempoReacao = 1;
+            points = 100;
+        }
+
+        //------- CONFIGURAÇÕES DA IA -------
         const network = new brain.NeuralNetwork()
-  
         network.fromJSON(treino)
-        //------- CONFIGURAÇÕES DO CANVAS -------
-        var canvas = canvasRef.current;
-        var width = canvas.width;
-        var height = canvas.height;
-        var ctx = canvas.getContext("2d");
-        var color = "white"
-
-        var scoreMaquina = 0;
-        var scorePerson = 0;
-
-        //------- CONFIGURAÇÕES DOS PADDLES -------
-        var velPaddle = 5;
-        var paddleHeight = 100;
-        var paddleWidth = 10;
-        var comeco = 1;
-
-        //------- CONFIGURAÇÕES DO PADDLE DA DIREITA -------
-        var paddleRightY = (height - paddleHeight) / 2;
-        var paddleRightX = width - 20 - paddleWidth;
-        var upPressedPaddleRight = false;
-        var downPressedPaddleRight = false;
-
-        //------- CONFIGURAÇÕES DO PADDLE DA ESQUERDA -------
-        var paddleLeftY = (height - paddleHeight) / 2;
-        var paddleLeftX = 20;
-        var upPressedPaddleLeft = false;
-        var downPressedPaddleLeft = false;
-
-        //------- CONFIGURAÇÕES DA BOLINHA -------
-        var ballRadius = 10;
-        var velBall = 5;
-
+        
+    
         function getRandomInt(min, max) {
             min = Math.ceil(min);
             max = Math.floor(max);
@@ -140,9 +251,9 @@ export function Jogo(){
         }
 
         function movePaddle() {
-            const result = network.run({ bolaY: y, paddleY: (paddleLeftY + (paddleHeight / 1)) })
+            const result = network.run({ bolaY: y, paddleY: (paddleLeftY + (paddleHeight / levelIA)) })
 
-            if (dx < 0) {
+            if (dx < 0 && x < width/tempoReacao) {
                 if (Object.values(result)[0] >= Object.values(result)[1]) {
                     downPressedPaddleLeft = false;
                     upPressedPaddleLeft = true;
@@ -168,7 +279,7 @@ export function Jogo(){
         function resetBall() {
             x = width / 2;
             y = height - (getRandomInt(0, height));
-            velBall = 5;
+            velBall = velPadrao;
             if (comeco == 1) {
                 dx = velBall;
             } else {
@@ -196,12 +307,13 @@ export function Jogo(){
 
                 }
                 else if (x + dx > canvas.width - ballRadius + 20) {       
-                    //alert("VITÓRIA DO ESQUERDO");
-                    //document.location.reload();
-                    //clearInterval(interval);
                     scoreMaquina++;
                     setScoreMachine(scoreMaquina)
-                    comeco = 1;          
+                    comeco = 1;     
+                    if(scoreMaquina == points){
+                        alert("VOCÊ PERDEU!");
+                        props.callbackParent(true)
+                    }     
                     resetBall()
                 }
             } else if (x + dx < ballRadius + 20) {
@@ -214,10 +326,12 @@ export function Jogo(){
                     scorePerson++;
                     setScoreHuman(scorePerson)
                     comeco = 0;
+                    if(scorePerson == points){
+                        alert("VOCÊ GANHOU!");
+                        
+                        props.callbackParent(true)
+                    }  
                     resetBall()
-                    //alert("VITÓRIA DO DIREITO");
-                    //document.location.reload();
-                    //clearInterval(interval);
                 }
             }
 

@@ -1,7 +1,6 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import { Jogo } from '../components/Jogo'
+import { Menu } from '../components/Menu'
 
 export default function Home() {
   return (
@@ -11,7 +10,7 @@ export default function Home() {
         <meta name="description" content="Jogo feito para jogar contra IA" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Jogo />
+      <Menu />
     </div>
   )
 }
